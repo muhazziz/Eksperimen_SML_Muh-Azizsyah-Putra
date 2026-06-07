@@ -1,0 +1,38 @@
+name: Automated Data Preprocessing
+
+on:
+  push:
+    paths:
+      - "preprocessing/automate_Azizsyah.py"
+  workflow_dispatch:
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn numpy
+
+      - name: Run preprocessing script
+        run: |
+          cd preprocessing
+          python automate_Azizsyah.py
+
+      - name: Commit processed data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add preprocessing/churn_preprocessing/
+          git commit -m "Auto-update processed dataset" || echo "No changes to commit"
+          git push
